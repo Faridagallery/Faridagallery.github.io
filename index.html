@@ -35,6 +35,7 @@
   main{max-width:1120px;margin:0 auto;padding:64px 20px}
   .head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:28px;border-bottom:1px solid var(--line);padding-bottom:16px}
   .head h2{font-family:var(--display);font-size:clamp(30px,6vw,42px);color:var(--wine)}
+  .section + .section{margin-top:56px}
   .chips{display:flex;gap:8px;flex-wrap:wrap}
   .chip{font:inherit;font-size:15px;padding:6px 16px;border:1px solid var(--wine);background:transparent;color:var(--wine);border-radius:999px;cursor:pointer}
   .chip[aria-pressed="true"]{background:var(--wine);color:var(--paper)}
@@ -84,11 +85,7 @@
 </header>
 
 <main id="products">
-  <div class="head">
-    <h2>عروض</h2>
-    <div class="chips" id="chips" role="group" aria-label="تصنيف المنتجات"></div>
-  </div>
-  <ul class="grid" id="grid"></ul>
+  <div id="sections"></div>
 </main>
 
 <footer id="contact">
@@ -138,56 +135,82 @@ const PRODUCTS = [
     desc: "تابلوه كبير واتنين تابلوه أصغر وفوتو بوك خشب يشيل 8 صور، في بوكس شيك.",
     img: "images/3.jpg",
     cat: "عروض"
-  }
+  },
+
+  /* منتجات عامة — عدّل الاسم والسعر من هنا */
+  { name: "منتج جديد 1", price: "", desc: "", img: "images/4.jpg", cat: "منتجات" },
+  { name: "منتج جديد 2", price: "", desc: "", img: "images/5.jpg", cat: "منتجات" },
+  { name: "منتج جديد 3", price: "", desc: "", img: "images/8.jpg", cat: "منتجات" },
+  { name: "منتج جديد 4", price: "", desc: "", img: "images/10.jpg", cat: "منتجات" },
+  { name: "منتج جديد 5", price: "", desc: "", img: "images/89.jpg", cat: "منتجات" },
+  { name: "منتج جديد 6", price: "", desc: "", img: "images/99.jpg", cat: "منتجات" },
+  { name: "منتج جديد 7", price: "", desc: "", img: "images/999.jpg", cat: "منتجات" }
 ];
 /* ============================================== */
 
-const grid = document.getElementById('grid');
-const chipsEl = document.getElementById('chips');
-const cats = ['الكل', ...new Set(PRODUCTS.map(p => p.cat).filter(Boolean))];
-let active = 'الكل';
+/* ترتيب الأقسام على الصفحة */
+const SECTIONS = ["عروض", "منتجات"];
+
 let visible = [];
 
 function orderLink(p){
-  const text = encodeURIComponent(`عايز أطلب: ${p.name} - ${p.price}`);
+  const text = encodeURIComponent(`عايز أطلب: ${p.name}${p.price ? ' - ' + p.price : ''}`);
   return `https://wa.me/${WHATSAPP}?text=${text}`;
 }
 
+function cardFor(p, i){
+  const li = document.createElement('li');
+  li.className = 'card';
+
+  const ph = document.createElement('div');
+  ph.className = 'ph';
+  ph.tabIndex = 0;
+  ph.setAttribute('role', 'button');
+  ph.setAttribute('aria-label', `تكبير صورة ${p.name}`);
+  ph.onclick = () => openLb(i);
+  ph.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLb(i); } };
+  const img = new Image();
+  img.alt = p.name; img.loading = 'lazy'; img.src = p.img;
+  img.onerror = () => { img.remove(); ph.classList.add('empty'); ph.textContent = 'ف'; };
+  ph.appendChild(img);
+  li.appendChild(ph);
+
+  li.insertAdjacentHTML('beforeend', `<h3></h3><p></p><div class="foot"><div class="price"></div></div>`);
+  li.querySelector('h3').textContent = p.name;
+  li.querySelector('p').textContent = p.desc || '';
+  li.querySelector('.price').textContent = p.price || 'اسأل عن السعر';
+
+  const a = document.createElement('a');
+  a.className = 'order';
+  a.href = orderLink(p);
+  a.target = '_blank';
+  a.rel = 'noopener';
+  a.textContent = 'اطلب على واتساب';
+  li.querySelector('.foot').appendChild(a);
+
+  return li;
+}
+
 function render(){
-  grid.innerHTML = '';
-  visible = PRODUCTS.filter(p => active === 'الكل' || p.cat === active);
-  visible.forEach((p, i) => {
-    const li = document.createElement('li');
-    li.className = 'card';
+  const root = document.getElementById('sections');
+  root.innerHTML = '';
+  visible = [];
 
-    const ph = document.createElement('div');
-    ph.className = 'ph';
-    ph.tabIndex = 0;
-    ph.setAttribute('role', 'button');
-    ph.setAttribute('aria-label', `تكبير صورة ${p.name}`);
-    ph.onclick = () => openLb(i);
-    ph.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLb(i); } };
-    const img = new Image();
-    img.alt = p.name; img.loading = 'lazy'; img.src = p.img;
-    img.onerror = () => { img.remove(); ph.classList.add('empty'); ph.textContent = 'ف'; };
-    ph.appendChild(img);
-    li.appendChild(ph);
+  SECTIONS.forEach(cat => {
+    const items = PRODUCTS.filter(p => p.cat === cat);
+    if (!items.length) return;
 
-    li.insertAdjacentHTML('beforeend', `<h3></h3><p></p><div class="foot"><div class="price"></div></div>`);
-    li.querySelector('h3').textContent = p.name;
-    li.querySelector('p').textContent = p.desc || '';
-    li.querySelector('.price').textContent = p.price || '';
+    const section = document.createElement('section');
+    section.className = 'section';
+    section.innerHTML = `<div class="head"><h2></h2></div><ul class="grid"></ul>`;
+    section.querySelector('h2').textContent = cat;
 
-    if (p.price) {
-      const a = document.createElement('a');
-      a.className = 'order';
-      a.href = orderLink(p);
-      a.target = '_blank';
-      a.rel = 'noopener';
-      a.textContent = 'اطلب على واتساب';
-      li.querySelector('.foot').appendChild(a);
-    }
-    grid.appendChild(li);
+    const ul = section.querySelector('.grid');
+    items.forEach(p => {
+      const i = visible.push(p) - 1;
+      ul.appendChild(cardFor(p, i));
+    });
+    root.appendChild(section);
   });
 }
 
@@ -231,21 +254,6 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'ArrowRight') showLb(lbIndex - 1);
   else if (e.key === 'ArrowLeft') showLb(lbIndex + 1);
 });
-
-
-if (cats.length > 2) {
-  cats.forEach(c => {
-    const b = document.createElement('button');
-    b.className = 'chip'; b.textContent = c;
-    b.setAttribute('aria-pressed', c === active);
-    b.onclick = () => {
-      active = c;
-      chipsEl.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x === b));
-      render();
-    };
-    chipsEl.appendChild(b);
-  });
-}
 
 document.getElementById('wa-link').href = `https://wa.me/${WHATSAPP}`;
 render();
