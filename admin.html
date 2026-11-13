@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>لوحة التحكم | فريدة جاليري</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --wine:#4a0416; --wine-2:#6b1228; --paper:#fbf6f4; --ink:#2b0a12; --muted:#7a5560; --line:#e6d3d6;
+    --display:'Aref Ruqaa',serif; --body:'IBM Plex Sans Arabic',system-ui,sans-serif;
+    --ok:#1f6f3f; --err:#a01818;
+  }
+  *{box-sizing:border-box;margin:0}
+  body{font-family:var(--body);background:var(--paper);color:var(--ink);line-height:1.7;padding:0 0 60px}
+  a{color:inherit}
+  :focus-visible{outline:3px solid var(--wine-2);outline-offset:3px}
+  .wrap{max-width:900px;margin:0 auto;padding:0 16px}
+  header{background:var(--wine);color:var(--paper);padding:22px 0;margin-bottom:26px}
+  header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  header h1{font-family:var(--display);font-size:26px}
+  header nav{display:flex;gap:8px;flex-wrap:wrap}
+  header a,header button{font:inherit;font-size:14px;color:var(--paper);background:transparent;border:1px solid var(--paper);border-radius:999px;padding:5px 16px;text-decoration:none;cursor:pointer}
+  header a:hover,header button:hover{background:var(--paper);color:var(--wine)}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:20px}
+  h2{font-family:var(--display);color:var(--wine);font-size:22px;margin-bottom:14px}
+  .hint{color:var(--muted);font-size:14px}
+  .hint a{color:var(--wine-2);text-decoration:underline}
+  label{display:block;font-size:14px;font-weight:600;margin:12px 0 4px}
+  input,textarea,select{width:100%;font:inherit;font-size:15px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+  textarea{min-height:74px;resize:vertical}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:560px){.row{grid-template-columns:1fr}}
+  .btn{font:inherit;font-weight:600;border:0;border-radius:999px;padding:10px 26px;cursor:pointer;background:var(--wine);color:var(--paper)}
+  .btn:hover{background:var(--wine-2)}
+  .btn[disabled]{opacity:.55;cursor:not-allowed}
+  .btn-ghost{background:transparent;color:var(--wine);border:1px solid var(--wine)}
+  .btn-ghost:hover{background:var(--wine);color:var(--paper)}
+  .btn-sm{padding:5px 14px;font-size:13px}
+  .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}
+
+  .status{margin-top:14px;font-size:14px;padding:10px 14px;border-radius:8px;display:none}
+  .status.show{display:block}
+  .status.ok{background:#eaf5ee;color:var(--ok);border:1px solid #c6e3d0}
+  .status.err{background:#fdecec;color:var(--err);border:1px solid #f3c9c9}
+  .status.busy{background:#f4eef0;color:var(--wine-2);border:1px solid var(--line)}
+
+  .thumb{width:62px;height:78px;object-fit:cover;border-radius:6px;background:var(--wine);flex:none}
+  .plist{list-style:none;padding:0;display:grid;gap:10px}
+  .pitem{display:flex;gap:12px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff}
+  .pitem .info{flex:1;min-width:0}
+  .pitem .name{font-weight:600;font-size:15px}
+  .pitem .meta{color:var(--muted);font-size:13px}
+  .pitem .tools{display:flex;gap:6px;flex-wrap:wrap}
+  .pitem .tools button{font:inherit;font-size:13px;padding:4px 10px;border:1px solid var(--line);background:transparent;border-radius:8px;cursor:pointer}
+  .pitem .tools button:hover{border-color:var(--wine);color:var(--wine)}
+  .preview{margin-top:10px;display:none}
+  .preview img{max-height:180px;border-radius:8px;border:1px solid var(--line)}
+  .empty{color:var(--muted);text-align:center;padding:16px}
+  .badge{display:inline-block;font-size:12px;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:1px 10px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>لوحة التحكم</h1>
+    <nav>
+      <a href="./" target="_blank" rel="noopener">فتح الموقع</a>
+      <button id="logout" hidden>خروج</button>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- تسجيل الدخول -->
+  <section class="card" id="login-card">
+    <h2>الدخول</h2>
+    <p class="hint">
+      محتاج GitHub Token مرة واحدة بس (بيتخزن في المتصفح ده لوحده).<br>
+      اعمل واحد من:
+      <a href="https://github.com/settings/tokens/new?scopes=repo&description=Farida%20Gallery%20Admin" target="_blank" rel="noopener">github.com/settings/tokens</a>
+      واختار صلاحية <strong>repo</strong> وبعدين الصق التوكن هنا.
+    </p>
+    <label for="token">GitHub Token</label>
+    <input id="token" type="password" placeholder="ghp_..." autocomplete="off" dir="ltr">
+    <div class="actions">
+      <button class="btn" id="login-btn">دخول</button>
+      <button class="btn btn-ghost" id="clear-token" type="button">مسح التوكن</button>
+    </div>
+    <div class="status" id="login-status"></div>
+  </section>
+
+  <!-- إضافة / تعديل -->
+  <section class="card" id="editor" hidden>
+    <h2 id="editor-title">إضافة منتج جديد</h2>
+    <form id="product-form">
+      <div class="row">
+        <div>
+          <label for="p-name">اسم المنتج *</label>
+          <input id="p-name" required placeholder="مثال: شنطة توتي باج">
+        </div>
+        <div>
+          <label for="p-price">السعر</label>
+          <input id="p-price" placeholder="مثال: 150 جنيه">
+        </div>
+      </div>
+
+      <label for="p-desc">الوصف (اختياري — كل سطر بيظهر لوحده)</label>
+      <textarea id="p-desc" placeholder="مقاس 45×40 بسوستة"></textarea>
+
+      <div class="row">
+        <div>
+          <label for="p-cat">القسم *</label>
+          <input id="p-cat" list="cats" required placeholder="منتجات">
+          <datalist id="cats"></datalist>
+          <p class="hint" style="font-size:12px;margin-top:4px">اختار قسم موجود أو اكتب اسم قسم جديد.</p>
+        </div>
+        <div>
+          <label for="p-img">صورة المنتج</label>
+          <input id="p-img" type="file" accept="image/*">
+          <p class="hint" style="font-size:12px;margin-top:4px" id="img-hint">الصورة بتتصغّر أوتوماتيك قبل الرفع.</p>
+        </div>
+      </div>
+
+      <div class="preview" id="preview"><img id="preview-img" alt=""></div>
+
+      <div class="actions">
+        <button class="btn" type="submit" id="save-btn">حفظ المنتج</button>
+        <button class="btn btn-ghost" type="button" id="cancel-edit" hidden>إلغاء التعديل</button>
+      </div>
+      <div class="status" id="form-status"></div>
+    </form>
+  </section>
+
+  <!-- القائمة -->
+  <section class="card" id="list-card" hidden>
+    <h2>المنتجات الحالية</h2>
+    <ul class="plist" id="plist"></ul>
+    <div class="status" id="list-status"></div>
+  </section>
+
+</div>
+
+<script>
+const OWNER = "Faridagallery";
+const REPO = "Faridagallery.github.io";
+const BRANCH = "main";
+const API = "https://api.github.com";
+const TOKEN_KEY = "farida_gh_token";
+
+const $ = id => document.getElementById(id);
+const loginCard = $("login-card"), editor = $("editor"), listCard = $("list-card");
+let token = localStorage.getItem(TOKEN_KEY) || "";
+let data = { sections: [], products: [] };
+let fileSha = null;
+let editingIndex = -1;
+let newImage = null; /* {blob, name} */
+
+/* ---------- helpers ---------- */
+function setStatus(el, kind, text){
+  el.className = "status show " + kind;
+  el.textContent = text;
+}
+function clearStatus(el){ el.className = "status"; el.textContent = ""; }
+
+function b64encodeUtf8(str){
+  const bytes = new TextEncoder().encode(str);
+  let bin = "";
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin);
+}
+function b64decodeUtf8(b64){
+  const bin = atob((b64 || "").replace(/\s/g, ""));
+  const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+function b64encodeBytes(arrayBuffer){
+  const bytes = new Uint8Array(arrayBuffer);
+  let bin = "";
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    bin += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+  }
+  return btoa(bin);
+}
+
+async function gh(path, options = {}){
+  const res = await fetch(API + path, {
+    ...options,
+    headers: {
+      Authorization: "Bearer " + token,
+      Accept: "application/vnd.github+json",
+      "User-Agent": "farida-admin",
+      ...(options.headers || {}),
+    },
+  });
+  if (!res.ok) {
+    let msg = "HTTP " + res.status;
+    try { const j = await res.json(); msg = j.message || msg; } catch {}
+    if (res.status === 401) msg = "التوكن غير صحيح أو منتهي. سجّل خروج وجرب توكن جديد.";
+    if (res.status === 403) msg = "التوكن مش معاه صلاحية كفاية (لازم repo). أو وصلت لحد الاستخدام.";
+    throw new Error(msg);
+  }
+  return res.status === 204 ? null : res.json();
+}
+
+async function loadData(){
+  const meta = await gh(`/repos/${OWNER}/${REPO}/contents/products.json?ref=${BRANCH}&t=${Date.now()}`);
+  fileSha = meta.sha;
+  const parsed = JSON.parse(b64decodeUtf8(meta.content));
+  data = {
+    sections: Array.isArray(parsed.sections) ? parsed.sections.slice() : [],
+    products: Array.isArray(parsed.products) ? parsed.products.slice() : [],
+  };
+  if (!data.sections.length) {
+    data.sections = [...new Set(data.products.map(p => p.cat).filter(Boolean))];
+  }
+  renderList();
+  renderCatOptions();
+}
+
+async function saveData(message){
+  const body = JSON.stringify(data, null, 2) + "\n";
+  await gh(`/repos/${OWNER}/${REPO}/contents/products.json`, {
+    method: "PUT",
+    body: JSON.stringify({
+      message,
+      content: b64encodeUtf8(body),
+      sha: fileSha,
+      branch: BRANCH,
+    }),
+  });
+  await loadData();
+}
+
+function renderCatOptions(){
+  $("cats").innerHTML = "";
+  data.sections.forEach(s => {
+    const o = document.createElement("option");
+    o.value = s;
+    $("cats").appendChild(o);
+  });
+}
+
+function renderList(){
+  const ul = $("plist");
+  ul.innerHTML = "";
+  if (!data.products.length) {
+    ul.innerHTML = '<li class="empty">مفيش منتجات لسه.</li>';
+    return;
+  }
+  data.products.forEach((p, i) => {
+    const li = document.createElement("li");
+    li.className = "pitem";
+
+    const img = document.createElement("img");
+    img.className = "thumb";
+    img.alt = "";
+    img.loading = "lazy";
+    img.src = p.img || "";
+    img.onerror = () => { img.remove(); };
+
+    const info = document.createElement("div");
+    info.className = "info";
+    const name = document.createElement("div");
+    name.className = "name";
+    name.textContent = p.name;
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    meta.textContent = `${p.price || "بدون سعر"} · `;
+    const badge = document.createElement("span");
+    badge.className = "badge";
+    badge.textContent = p.cat || "بدون قسم";
+    meta.appendChild(badge);
+    info.append(name, meta);
+
+    const tools = document.createElement("div");
+    tools.className = "tools";
+
+    const up = document.createElement("button");
+    up.type = "button"; up.textContent = "↑";
+    up.title = "تحريك لفوق";
+    up.disabled = i === 0;
+    up.onclick = () => move(i, -1);
+
+    const down = document.createElement("button");
+    down.type = "button"; down.textContent = "↓";
+    down.title = "تحريك لتحت";
+    down.disabled = i === data.products.length - 1;
+    down.onclick = () => move(i, 1);
+
+    const edit = document.createElement("button");
+    edit.type = "button"; edit.textContent = "تعديل";
+    edit.onclick = () => startEdit(i);
+
+    const del = document.createElement("button");
+    del.type = "button"; del.textContent = "حذف";
+    del.onclick = () => removeProduct(i);
+
+    tools.append(up, down, edit, del);
+    li.append(img, info, tools);
+    ul.appendChild(li);
+  });
+}
+
+function move(i, dir){
+  const j = i + dir;
+  if (j < 0 || j >= data.products.length) return;
+  [data.products[i], data.products[j]] = [data.products[j], data.products[i]];
+  const status = $("list-status");
+  setStatus(status, "busy", "بيحفظ الترتيب...");
+  saveData("Reorder products").then(() => {
+    setStatus(status, "ok", "اتحفظ الترتيب. الموقع هيتحدّث خلال دقيقة.");
+  }).catch(e => setStatus(status, "err", e.message));
+}
+
+function removeProduct(i){
+  const p = data.products[i];
+  if (!confirm(`تحذف "${p.name}"؟`)) return;
+  data.products.splice(i, 1);
+  const status = $("list-status");
+  setStatus(status, "busy", "بيحذف...");
+  saveData(`Delete product: ${p.name}`).then(() => {
+    setStatus(status, "ok", "اتحذف. الموقع هيتحدّث خلال دقيقة.");
+  }).catch(e => setStatus(status, "err", e.message));
+}
+
+/* ---------- form ---------- */
+function resetForm(){
+  editingIndex = -1;
+  newImage = null;
+  $("product-form").reset();
+  $("editor-title").textContent = "إضافة منتج جديد";
+  $("save-btn").textContent = "حفظ المنتج";
+  $("cancel-edit").hidden = true;
+  $("preview").style.display = "none";
+  $("preview-img").removeAttribute("src");
+  $("img-hint").textContent = "الصورة بتتصغّر أوتوماتيك قبل الرفع.";
+  clearStatus($("form-status"));
+}
+
+function startEdit(i){
+  const p = data.products[i];
+  editingIndex = i;
+  newImage = null;
+  $("p-name").value = p.name || "";
+  $("p-price").value = p.price || "";
+  $("p-desc").value = p.desc || "";
+  $("p-cat").value = p.cat || "";
+  $("p-img").value = "";
+  $("editor-title").textContent = "تعديل المنتج";
+  $("save-btn").textContent = "حفظ التعديل";
+  $("cancel-edit").hidden = false;
+  if (p.img) {
+    $("preview").style.display = "block";
+    $("preview-img").src = p.img + "?t=" + Date.now();
+  } else {
+    $("preview").style.display = "none";
+  }
+  clearStatus($("form-status"));
+  editor.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+$("cancel-edit").onclick = resetForm;
+
+$("p-img").onchange = async () => {
+  const f = $("p-img").files[0];
+  if (!f) return;
+  try {
+    const blob = await compressImage(f);
+    newImage = { blob };
+    const url = URL.createObjectURL(blob);
+    $("preview").style.display = "block";
+    $("preview-img").src = url;
+    $("img-hint").textContent = `جاهزة للرفع (${Math.round(blob.size / 1024)} كيلو)`;
+  } catch (e) {
+    setStatus($("form-status"), "err", "تعذّر قراءة الصورة: " + e.message);
+  }
+};
+
+async function compressImage(file){
+  const bitmap = await createImageBitmap(file);
+  const MAX_W = 1000, MAX_H = 1250;
+  const scale = Math.min(1, MAX_W / bitmap.width, MAX_H / bitmap.height);
+  const w = Math.round(bitmap.width * scale);
+  const h = Math.round(bitmap.height * scale);
+  const canvas = document.createElement("canvas");
+  canvas.width = w; canvas.height = h;
+  canvas.getContext("2d").drawImage(bitmap, 0, 0, w, h);
+  const blob = await new Promise(res => canvas.toBlob(res, "image/jpeg", 0.82));
+  if (!blob) throw new Error("فشل تحويل الصورة");
+  return blob;
+}
+
+async function uploadImage(blob){
+  const name = "images/p" + Date.now() + ".jpg";
+  const buf = await blob.arrayBuffer();
+  await gh(`/repos/${OWNER}/${REPO}/contents/${name}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      message: "Upload product image",
+      content: b64encodeBytes(buf),
+      branch: BRANCH,
+    }),
+  });
+  return name;
+}
+
+$("product-form").onsubmit = async (e) => {
+  e.preventDefault();
+  const status = $("form-status");
+  const btn = $("save-btn");
+
+  const name = $("p-name").value.trim();
+  const price = $("p-price").value.trim();
+  const desc = $("p-desc").value.trim();
+  let cat = $("p-cat").value.trim();
+
+  if (!name) { setStatus(status, "err", "اكتب اسم المنتج."); return; }
+  if (!cat) { setStatus(status, "err", "اختار أو اكتب القسم."); return; }
+  if (editingIndex < 0 && !newImage) { setStatus(status, "err", "اختار صورة للمنتج."); return; }
+
+  btn.disabled = true;
+  try {
+    let imgPath = editingIndex >= 0 ? data.products[editingIndex].img : "";
+    if (newImage) {
+      setStatus(status, "busy", "بيرفع الصورة...");
+      imgPath = await uploadImage(newImage.blob);
+    }
+
+    if (!data.sections.includes(cat)) data.sections.push(cat);
+
+    const product = { name, price, desc, img: imgPath, cat };
+    if (editingIndex >= 0) {
+      data.products[editingIndex] = product;
+    } else {
+      data.products.push(product);
+    }
+
+    setStatus(status, "busy", "بيحفظ البيانات...");
+    await saveData(editingIndex >= 0 ? `Update product: ${name}` : `Add product: ${name}`);
+    resetForm();
+    setStatus(status, "ok", "تم الحفظ ✅ الموقع هيتحدّث خلال دقيقة.");
+  } catch (err) {
+    setStatus(status, "err", "حصلت مشكلة: " + err.message);
+  } finally {
+    btn.disabled = false;
+  }
+};
+
+/* ---------- auth ---------- */
+async function login(){
+  token = $("token").value.trim();
+  if (!token) { setStatus($("login-status"), "err", "الصق التوكن الأول."); return; }
+  setStatus($("login-status"), "busy", "بيتأكد من التوكن...");
+  try {
+    const u = await gh("/user");
+    localStorage.setItem(TOKEN_KEY, token);
+    setStatus($("login-status"), "ok", `أهلًا ${u.login} ✅`);
+    await enter();
+  } catch (e) {
+    setStatus($("login-status"), "err", e.message);
+  }
+}
+
+async function enter(){
+  loginCard.hidden = true;
+  editor.hidden = false;
+  listCard.hidden = false;
+  $("logout").hidden = false;
+  resetForm();
+  try {
+    await loadData();
+  } catch (e) {
+    setStatus($("list-status"), "err", "تعذّر تحميل المنتجات: " + e.message);
+  }
+}
+
+function logout(){
+  localStorage.removeItem(TOKEN_KEY);
+  token = "";
+  loginCard.hidden = false;
+  editor.hidden = true;
+  listCard.hidden = true;
+  $("logout").hidden = true;
+  $("token").value = "";
+  clearStatus($("login-status"));
+}
+
+$("login-btn").onclick = login;
+$("token").addEventListener("keydown", e => { if (e.key === "Enter") login(); });
+$("clear-token").onclick = logout;
+$("logout").onclick = logout;
+
+if (token) {
+  $("token").value = token;
+  enter();
+}
+</script>
+</body>
+</html>
