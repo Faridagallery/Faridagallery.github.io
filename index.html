@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>فريدة جاليري | Farida Gallery</title>
 <meta name="description" content="فريدة جاليري – كل حاجة بتصميمك ليها طابع مميز">
+<meta property="og:title" content="فريدة جاليري | Farida Gallery">
+<meta property="og:description" content="كل حاجة بتصميمك ليها طابع مميز">
+<meta property="og:type" content="website">
+<meta property="og:image" content="images/1.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
@@ -41,7 +45,10 @@
   .card .ph.empty{color:var(--paper);font-family:var(--display);font-size:56px}
   .card h3{font-size:18px;font-weight:600;margin-top:12px}
   .card p{color:var(--muted);font-size:15px}
-  .card .price{margin-top:4px;font-weight:600;color:var(--wine-2)}
+  .card .foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:6px}
+  .card .price{font-weight:600;color:var(--wine-2);font-size:17px}
+  .card .order{font-size:14px;text-decoration:none;border:1px solid var(--wine);color:var(--wine);padding:4px 14px;border-radius:999px;white-space:nowrap}
+  .card .order:hover{background:var(--wine);color:var(--paper)}
 
   footer{background:var(--wine);color:var(--paper);text-align:center;padding:48px 20px}
   footer h2{font-family:var(--display);font-size:30px;margin-bottom:8px}
@@ -66,7 +73,7 @@
 
 <main id="products">
   <div class="head">
-    <h2>منتجاتنا</h2>
+    <h2>عروض</h2>
     <div class="chips" id="chips" role="group" aria-label="تصنيف المنتجات"></div>
   </div>
   <ul class="grid" id="grid"></ul>
@@ -76,7 +83,7 @@
   <h2>عايز تطلب أو تسأل؟</h2>
   <p>كلمنا وهنرد عليك في أقرب وقت.</p>
   <div class="links">
-    <a href="https://wa.me/201000000000" target="_blank" rel="noopener">واتساب</a>
+    <a id="wa-link" href="https://wa.me/201000000000" target="_blank" rel="noopener">واتساب</a>
     <a href="https://www.facebook.com/Farida.gallery.EG/" target="_blank" rel="noopener">فيسبوك</a>
   </div>
   <small>فريدة جاليري — Made with Love</small>
@@ -85,15 +92,33 @@
 <script>
 /* ============ عدّل المنتجات من هنا ============
    name: اسم المنتج | price: السعر | desc: وصف قصير
-   img: مسار الصورة (حط الصور في فولدر اسمه images) | cat: التصنيف
+   img: مسار الصورة (الصور في فولدر images) | cat: التصنيف
    لو الصورة مش موجودة هيظهر مربع بوردو بدالها. */
+
+const WHATSAPP = "201000000000"; /* ← رقم الواتساب بالكود الدولي بدون + (مثال: 201012345678) */
+
 const PRODUCTS = [
-  { name:"منتج 1", price:"250 جنيه", desc:"وصف قصير للمنتج", img:"images/1.jpg", cat:"تصنيف 1" },
-  { name:"منتج 2", price:"300 جنيه", desc:"وصف قصير للمنتج", img:"images/2.jpg", cat:"تصنيف 1" },
-  { name:"منتج 3", price:"180 جنيه", desc:"وصف قصير للمنتج", img:"images/3.jpg", cat:"تصنيف 2" },
-  { name:"منتج 4", price:"420 جنيه", desc:"وصف قصير للمنتج", img:"images/4.jpg", cat:"تصنيف 2" },
-  { name:"منتج 5", price:"150 جنيه", desc:"وصف قصير للمنتج", img:"images/5.jpg", cat:"تصنيف 1" },
-  { name:"منتج 6", price:"360 جنيه", desc:"وصف قصير للمنتج", img:"images/6.jpg", cat:"تصنيف 2" }
+  {
+    name: "بوكس شنطة توتي باج",
+    price: "350 جنيه",
+    desc: "شنطة توتي باج بسوستة وباوتش ومج من تصميمك، مع اتنين مدالية هاند ميد من تصميمك، في بوكس شيك.",
+    img: "images/1.jpg",
+    cat: "عروض"
+  },
+  {
+    name: "بوكس تابلوه وفوتو بوك",
+    price: "350 جنيه",
+    desc: "تابلوه كبير وفوتو بوك خشب A5 يشيل 8 صور، مع اتنين مدالية هاند ميد من تصميمك، في بوكس شيك.",
+    img: "images/2.jpg",
+    cat: "عروض"
+  },
+  {
+    name: "بوكس تابلوهات وفوتو بوك",
+    price: "380 جنيه",
+    desc: "تابلوه كبير واتنين تابلوه أصغر وفوتو بوك خشب يشيل 8 صور، في بوكس شيك.",
+    img: "images/3.jpg",
+    cat: "عروض"
+  }
 ];
 /* ============================================== */
 
@@ -102,23 +127,39 @@ const chipsEl = document.getElementById('chips');
 const cats = ['الكل', ...new Set(PRODUCTS.map(p => p.cat).filter(Boolean))];
 let active = 'الكل';
 
+function orderLink(p){
+  const text = encodeURIComponent(`عايز أطلب: ${p.name} - ${p.price}`);
+  return `https://wa.me/${WHATSAPP}?text=${text}`;
+}
+
 function render(){
   grid.innerHTML = '';
   PRODUCTS.filter(p => active === 'الكل' || p.cat === active).forEach(p => {
     const li = document.createElement('li');
     li.className = 'card';
+
     const ph = document.createElement('div');
     ph.className = 'ph';
     const img = new Image();
     img.alt = p.name; img.loading = 'lazy'; img.src = p.img;
-    img.onerror = () => { ph.classList.add('empty'); ph.textContent = 'ف'; };
+    img.onerror = () => { img.remove(); ph.classList.add('empty'); ph.textContent = 'ف'; };
     ph.appendChild(img);
     li.appendChild(ph);
-    li.insertAdjacentHTML('beforeend',
-      `<h3></h3><p></p><div class="price"></div>`);
+
+    li.insertAdjacentHTML('beforeend', `<h3></h3><p></p><div class="foot"><div class="price"></div></div>`);
     li.querySelector('h3').textContent = p.name;
     li.querySelector('p').textContent = p.desc || '';
     li.querySelector('.price').textContent = p.price || '';
+
+    if (p.price) {
+      const a = document.createElement('a');
+      a.className = 'order';
+      a.href = orderLink(p);
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.textContent = 'اطلب على واتساب';
+      li.querySelector('.foot').appendChild(a);
+    }
     grid.appendChild(li);
   });
 }
@@ -136,6 +177,8 @@ if (cats.length > 2) {
     chipsEl.appendChild(b);
   });
 }
+
+document.getElementById('wa-link').href = `https://wa.me/${WHATSAPP}`;
 render();
 </script>
 </body>
