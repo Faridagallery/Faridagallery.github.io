@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>فريدة جاليري | Farida Gallery</title>
+<meta name="description" content="فريدة جاليري – كل حاجة بتصميمك ليها طابع مميز">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --wine:#4a0416; --wine-2:#6b1228; --paper:#fbf6f4; --ink:#2b0a12; --muted:#7a5560; --line:#e6d3d6;
+    --display:'Aref Ruqaa',serif; --body:'IBM Plex Sans Arabic',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--body);background:var(--paper);color:var(--ink);line-height:1.7}
+  a{color:inherit}
+  :focus-visible{outline:3px solid var(--wine-2);outline-offset:3px}
+
+  /* Hero: the logo's circle is the one memorable element */
+  .hero{background:var(--wine);color:var(--paper);min-height:78vh;display:grid;place-items:center;padding:32px 16px}
+  .ring{width:min(78vw,440px);aspect-ratio:1;border:3px solid var(--paper);border-radius:50%;display:grid;place-content:center;text-align:center;gap:4px;padding:24px}
+  .ring h1{font-family:var(--display);font-size:clamp(64px,16vw,112px);line-height:1.1;font-weight:700}
+  .ring .en{letter-spacing:.5em;font-size:clamp(16px,4vw,24px);margin-inline-start:.5em;font-family:Georgia,serif}
+  .ring .sub{font-style:italic;font-family:Georgia,serif;opacity:.85;font-size:clamp(14px,3.4vw,19px)}
+  .tag{margin-top:28px;text-align:center;opacity:.9;font-size:clamp(15px,3.6vw,18px)}
+  .hero-in{display:grid;place-items:center}
+
+  main{max-width:1120px;margin:0 auto;padding:64px 20px}
+  .head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:28px;border-bottom:1px solid var(--line);padding-bottom:16px}
+  .head h2{font-family:var(--display);font-size:clamp(30px,6vw,42px);color:var(--wine)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{font:inherit;font-size:15px;padding:6px 16px;border:1px solid var(--wine);background:transparent;color:var(--wine);border-radius:999px;cursor:pointer}
+  .chip[aria-pressed="true"]{background:var(--wine);color:var(--paper)}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:28px 22px;list-style:none;padding:0}
+  .card .ph{aspect-ratio:4/5;background:var(--wine);overflow:hidden;display:grid;place-items:center;border-radius:2px 2px 90px 2px}
+  .card img{width:100%;height:100%;object-fit:cover;display:block}
+  .card .ph.empty{color:var(--paper);font-family:var(--display);font-size:56px}
+  .card h3{font-size:18px;font-weight:600;margin-top:12px}
+  .card p{color:var(--muted);font-size:15px}
+  .card .price{margin-top:4px;font-weight:600;color:var(--wine-2)}
+
+  footer{background:var(--wine);color:var(--paper);text-align:center;padding:48px 20px}
+  footer h2{font-family:var(--display);font-size:30px;margin-bottom:8px}
+  footer .links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+  footer .links a{border:1px solid var(--paper);padding:8px 22px;border-radius:999px;text-decoration:none}
+  footer .links a:hover{background:var(--paper);color:var(--wine)}
+  footer small{display:block;margin-top:28px;opacity:.7}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-in">
+    <div class="ring">
+      <h1>فريدة</h1>
+      <div class="en">FARIDA</div>
+      <div class="sub">— Gallery —</div>
+    </div>
+    <p class="tag">كل حاجة بتصميمك ليها طابع مميز</p>
+  </div>
+</header>
+
+<main id="products">
+  <div class="head">
+    <h2>منتجاتنا</h2>
+    <div class="chips" id="chips" role="group" aria-label="تصنيف المنتجات"></div>
+  </div>
+  <ul class="grid" id="grid"></ul>
+</main>
+
+<footer id="contact">
+  <h2>عايز تطلب أو تسأل؟</h2>
+  <p>كلمنا وهنرد عليك في أقرب وقت.</p>
+  <div class="links">
+    <a href="https://wa.me/201000000000" target="_blank" rel="noopener">واتساب</a>
+    <a href="https://www.facebook.com/Farida.gallery.EG/" target="_blank" rel="noopener">فيسبوك</a>
+  </div>
+  <small>فريدة جاليري — Made with Love</small>
+</footer>
+
+<script>
+/* ============ عدّل المنتجات من هنا ============
+   name: اسم المنتج | price: السعر | desc: وصف قصير
+   img: مسار الصورة (حط الصور في فولدر اسمه images) | cat: التصنيف
+   لو الصورة مش موجودة هيظهر مربع بوردو بدالها. */
+const PRODUCTS = [
+  { name:"منتج 1", price:"250 جنيه", desc:"وصف قصير للمنتج", img:"images/1.jpg", cat:"تصنيف 1" },
+  { name:"منتج 2", price:"300 جنيه", desc:"وصف قصير للمنتج", img:"images/2.jpg", cat:"تصنيف 1" },
+  { name:"منتج 3", price:"180 جنيه", desc:"وصف قصير للمنتج", img:"images/3.jpg", cat:"تصنيف 2" },
+  { name:"منتج 4", price:"420 جنيه", desc:"وصف قصير للمنتج", img:"images/4.jpg", cat:"تصنيف 2" },
+  { name:"منتج 5", price:"150 جنيه", desc:"وصف قصير للمنتج", img:"images/5.jpg", cat:"تصنيف 1" },
+  { name:"منتج 6", price:"360 جنيه", desc:"وصف قصير للمنتج", img:"images/6.jpg", cat:"تصنيف 2" }
+];
+/* ============================================== */
+
+const grid = document.getElementById('grid');
+const chipsEl = document.getElementById('chips');
+const cats = ['الكل', ...new Set(PRODUCTS.map(p => p.cat).filter(Boolean))];
+let active = 'الكل';
+
+function render(){
+  grid.innerHTML = '';
+  PRODUCTS.filter(p => active === 'الكل' || p.cat === active).forEach(p => {
+    const li = document.createElement('li');
+    li.className = 'card';
+    const ph = document.createElement('div');
+    ph.className = 'ph';
+    const img = new Image();
+    img.alt = p.name; img.loading = 'lazy'; img.src = p.img;
+    img.onerror = () => { ph.classList.add('empty'); ph.textContent = 'ف'; };
+    ph.appendChild(img);
+    li.appendChild(ph);
+    li.insertAdjacentHTML('beforeend',
+      `<h3></h3><p></p><div class="price"></div>`);
+    li.querySelector('h3').textContent = p.name;
+    li.querySelector('p').textContent = p.desc || '';
+    li.querySelector('.price').textContent = p.price || '';
+    grid.appendChild(li);
+  });
+}
+
+if (cats.length > 2) {
+  cats.forEach(c => {
+    const b = document.createElement('button');
+    b.className = 'chip'; b.textContent = c;
+    b.setAttribute('aria-pressed', c === active);
+    b.onclick = () => {
+      active = c;
+      chipsEl.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x === b));
+      render();
+    };
+    chipsEl.appendChild(b);
+  });
+}
+render();
+</script>
+</body>
+</html>
