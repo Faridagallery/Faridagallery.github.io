@@ -8,7 +8,8 @@
 <meta property="og:title" content="فريدة جاليري | Farida Gallery">
 <meta property="og:description" content="كل حاجة بتصميمك ليها طابع مميز">
 <meta property="og:type" content="website">
-<meta property="og:image" content="images/1.jpg">
+<meta property="og:image" content="images/100.jpg">
+<link rel="preload" as="image" href="images/100.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
@@ -23,14 +24,18 @@
   a{color:inherit}
   :focus-visible{outline:3px solid var(--wine-2);outline-offset:3px}
 
-  /* Hero: the logo's circle is the one memorable element */
-  .hero{background:var(--wine);color:var(--paper);min-height:78vh;display:grid;place-items:center;padding:32px 16px}
-  .ring{width:min(78vw,440px);aspect-ratio:1;border:3px solid var(--paper);border-radius:50%;display:grid;place-content:center;text-align:center;gap:4px;padding:24px}
-  .ring h1{font-family:var(--display);font-size:clamp(64px,16vw,112px);line-height:1.1;font-weight:700}
-  .ring .en{letter-spacing:.5em;font-size:clamp(16px,4vw,24px);margin-inline-start:.5em;font-family:Georgia,serif}
-  .ring .sub{font-style:italic;font-family:Georgia,serif;opacity:.85;font-size:clamp(14px,3.4vw,19px)}
-  .tag{margin-top:28px;text-align:center;opacity:.9;font-size:clamp(15px,3.6vw,18px)}
-  .hero-in{display:grid;place-items:center}
+  /* Landing hero */
+  .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:space-between;gap:24px;background:var(--wine);color:var(--paper);overflow:hidden;padding:28px 20px 44px;text-align:center}
+  .hero-bg{position:absolute;inset:0;background:#4a0416 url("images/100.jpg") center/cover no-repeat}
+  .hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(43,10,18,.92) 0%,rgba(43,10,18,.35) 42%,rgba(43,10,18,.18) 70%,rgba(43,10,18,.45) 100%)}
+  .hero-top,.hero-bottom{position:relative;z-index:1}
+  .hero-mark{display:block;font-family:var(--display);font-size:clamp(38px,9vw,54px);line-height:1.15;font-weight:700}
+  .hero-mark-en{display:block;letter-spacing:.4em;font-size:clamp(10px,2.6vw,13px);opacity:.9;margin-top:2px}
+  .hero-bottom{display:grid;gap:18px;place-items:center}
+  .tag{opacity:.95;font-size:clamp(15px,3.6vw,18px);text-shadow:0 1px 12px rgba(0,0,0,.45)}
+  .hero-cta{display:inline-flex;align-items:center;gap:10px;background:var(--paper);color:var(--wine);text-decoration:none;padding:14px 36px;border-radius:999px;font:inherit;font-size:clamp(16px,4vw,18px);font-weight:600;box-shadow:0 10px 28px rgba(0,0,0,.28);transition:transform .16s ease,box-shadow .16s ease}
+  .hero-cta:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(0,0,0,.34)}
+  .hero-cta .arw{font-size:20px;line-height:1}
 
   main{max-width:1120px;margin:0 auto;padding:64px 20px}
   .head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:28px;border-bottom:1px solid var(--line);padding-bottom:16px}
@@ -76,14 +81,15 @@
 </head>
 <body>
 
-<header class="hero">
-  <div class="hero-in">
-    <div class="ring">
-      <h1>فريدة</h1>
-      <div class="en">FARIDA</div>
-      <div class="sub">— Gallery —</div>
-    </div>
+<header class="hero" id="top">
+  <div class="hero-bg" role="img" aria-label="فريدة جاليري"></div>
+  <div class="hero-top">
+    <span class="hero-mark">فريدة</span>
+    <span class="hero-mark-en">FARIDA GALLERY</span>
+  </div>
+  <div class="hero-bottom">
     <p class="tag">كل حاجة بتصميمك ليها طابع مميز</p>
+    <a class="hero-cta" href="#products">عرض المنتجات <span class="arw" aria-hidden="true">↓</span></a>
   </div>
 </header>
 
