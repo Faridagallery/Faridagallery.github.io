@@ -111,6 +111,9 @@
         </div>
       </div>
 
+      <label for="p-old">السعر قبل الخصم (اختياري — بيظهر مشطوب بـ«بدلاً من»)</label>
+      <input id="p-old" placeholder="مثال: 195 جنيه">
+
       <label for="p-desc">الوصف (اختياري — كل سطر بيظهر لوحده)</label>
       <textarea id="p-desc" placeholder="مقاس 45×40 بسوستة"></textarea>
 
@@ -273,7 +276,7 @@ function renderList(){
     name.textContent = p.name;
     const meta = document.createElement("div");
     meta.className = "meta";
-    meta.textContent = `${p.price || "بدون سعر"} · `;
+    meta.textContent = `${p.price || "بدون سعر"}${p.oldPrice ? " (بدلاً من " + p.oldPrice + ")" : ""} · `;
     const badge = document.createElement("span");
     badge.className = "badge";
     badge.textContent = p.cat || "بدون قسم";
@@ -351,6 +354,7 @@ function startEdit(i){
   newImage = null;
   $("p-name").value = p.name || "";
   $("p-price").value = p.price || "";
+  $("p-old").value = p.oldPrice || "";
   $("p-desc").value = p.desc || "";
   $("p-cat").value = p.cat || "";
   $("p-img").value = "";
@@ -419,6 +423,7 @@ $("product-form").onsubmit = async (e) => {
 
   const name = $("p-name").value.trim();
   const price = $("p-price").value.trim();
+  const oldPrice = $("p-old").value.trim();
   const desc = $("p-desc").value.trim();
   let cat = $("p-cat").value.trim();
 
@@ -437,6 +442,7 @@ $("product-form").onsubmit = async (e) => {
     if (!data.sections.includes(cat)) data.sections.push(cat);
 
     const product = { name, price, desc, img: imgPath, cat };
+    if (oldPrice) product.oldPrice = oldPrice;
     if (editingIndex >= 0) {
       data.products[editingIndex] = product;
     } else {
