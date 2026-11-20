@@ -114,6 +114,14 @@
       <label for="p-old">السعر قبل الخصم (اختياري — بيظهر مشطوب بـ«بدلاً من»)</label>
       <input id="p-old" placeholder="مثال: 195 جنيه">
 
+      <label for="p-badge">الشارة (اختياري)</label>
+      <select id="p-badge">
+        <option value="">بدون شارة</option>
+        <option value="جديد">جديد</option>
+        <option value="الأكثر مبيعًا">الأكثر مبيعًا</option>
+        <option value="نفد">نفد</option>
+      </select>
+
       <label for="p-desc">الوصف (اختياري — كل سطر بيظهر لوحده)</label>
       <textarea id="p-desc" placeholder="مقاس 45×40 بسوستة"></textarea>
 
@@ -148,6 +156,35 @@
     <div class="status" id="list-status"></div>
   </section>
 
+  <!-- آراء العملاء -->
+  <section class="card" id="reviews-card" hidden>
+    <h2>آراء العملاء</h2>
+    <p class="hint">بدّلي الآراء التجريبية بآراء حقيقية قبل النشر.</p>
+    <ul class="plist" id="rlist"></ul>
+    <div class="row">
+      <div>
+        <label for="r-name">الاسم</label>
+        <input id="r-name" placeholder="مثال: سارة م.">
+      </div>
+      <div>
+        <label for="r-rating">التقييم</label>
+        <select id="r-rating">
+          <option value="5">5 نجوم</option>
+          <option value="4">4 نجوم</option>
+          <option value="3">3 نجوم</option>
+          <option value="2">نجمتان</option>
+          <option value="1">نجمة واحدة</option>
+        </select>
+      </div>
+    </div>
+    <label for="r-text">الرأي</label>
+    <textarea id="r-text" placeholder="اكتبي رأي العميل هنا"></textarea>
+    <div class="actions">
+      <button class="btn" type="button" id="add-review">إضافة رأي</button>
+    </div>
+    <div class="status" id="r-status"></div>
+  </section>
+
 </div>
 
 <script>
@@ -160,7 +197,7 @@ const TOKEN_KEY = "farida_gh_token";
 const $ = id => document.getElementById(id);
 const loginCard = $("login-card"), editor = $("editor"), listCard = $("list-card");
 let token = localStorage.getItem(TOKEN_KEY) || "";
-let data = { sections: [], products: [] };
+let data = { sections: [], products: [], reviews: [] };
 let fileSha = null;
 let editingIndex = -1;
 let newImage = null; /* {blob, name} */
@@ -220,12 +257,14 @@ async function loadData(){
   data = {
     sections: Array.isArray(parsed.sections) ? parsed.sections.slice() : [],
     products: Array.isArray(parsed.products) ? parsed.products.slice() : [],
+    reviews: Array.isArray(parsed.reviews) ? parsed.reviews.slice() : [],
   };
   if (!data.sections.length) {
     data.sections = [...new Set(data.products.map(p => p.cat).filter(Boolean))];
   }
   renderList();
   renderCatOptions();
+  renderReviews();
 }
 
 async function saveData(message){
@@ -312,6 +351,57 @@ function renderList(){
   });
 }
 
+function renderReviews(){
+  const ul = $("rlist");
+  ul.innerHTML = "";
+  if (!data.reviews.length) {
+    ul.innerHTML = '<li class="empty">مفيش آراء لسه.</li>';
+    return;
+  }
+  data.reviews.forEach((r, i) => {
+    const li = document.createElement("li");
+    li.className = "pitem";
+    const info = document.createElement("div");
+    info.className = "info";
+    const name = document.createElement("div");
+    name.className = "name";
+    name.textContent = `${"★".repeat(Number(r.rating) || 5)} ${r.name || ""}`;
+    const text = document.createElement("div");
+    text.className = "meta";
+    text.textContent = r.text || "";
+    info.append(name, text);
+    const del = document.createElement("button");
+    del.type = "button";
+    del.textContent = "حذف";
+    del.onclick = () => removeReview(i);
+    li.append(info, del);
+    ul.appendChild(li);
+  });
+}
+
+function removeReview(i){
+  const r = data.reviews[i];
+  if (!confirm(`تحذف رأي "${r.name || ""}"؟`)) return;
+  data.reviews.splice(i, 1);
+  setStatus($("r-status"), "busy", "بيحذف...");
+  saveData(`Delete review: ${r.name || ""}`).then(() => {
+    setStatus($("r-status"), "ok", "اتحذف ✅");
+  }).catch(e => setStatus($("r-status"), "err", e.message));
+}
+
+$("add-review").onclick = () => {
+  const name = $("r-name").value.trim();
+  const text = $("r-text").value.trim();
+  const rating = Number($("r-rating").value);
+  if (!name || !text) { setStatus($("r-status"), "err", "اكتب الاسم والرأي."); return; }
+  data.reviews.push({ name, rating, text });
+  setStatus($("r-status"), "busy", "بيحفظ...");
+  saveData(`Add review: ${name}`).then(() => {
+    $("r-name").value = ""; $("r-text").value = "";
+    setStatus($("r-status"), "ok", "اتضاف الرأي ✅ الموقع هيتحدّث خلال دقيقة.");
+  }).catch(e => setStatus($("r-status"), "err", e.message));
+};
+
 function move(i, dir){
   const j = i + dir;
   if (j < 0 || j >= data.products.length) return;
@@ -355,6 +445,7 @@ function startEdit(i){
   $("p-name").value = p.name || "";
   $("p-price").value = p.price || "";
   $("p-old").value = p.oldPrice || "";
+  $("p-badge").value = p.badge || "";
   $("p-desc").value = p.desc || "";
   $("p-cat").value = p.cat || "";
   $("p-img").value = "";
@@ -424,6 +515,7 @@ $("product-form").onsubmit = async (e) => {
   const name = $("p-name").value.trim();
   const price = $("p-price").value.trim();
   const oldPrice = $("p-old").value.trim();
+  const badge = $("p-badge").value;
   const desc = $("p-desc").value.trim();
   let cat = $("p-cat").value.trim();
 
@@ -443,6 +535,7 @@ $("product-form").onsubmit = async (e) => {
 
     const product = { name, price, desc, img: imgPath, cat };
     if (oldPrice) product.oldPrice = oldPrice;
+    if (badge) product.badge = badge;
     if (editingIndex >= 0) {
       data.products[editingIndex] = product;
     } else {
@@ -479,6 +572,7 @@ async function enter(){
   loginCard.hidden = true;
   editor.hidden = false;
   listCard.hidden = false;
+  $("reviews-card").hidden = false;
   $("logout").hidden = false;
   resetForm();
   try {
@@ -494,6 +588,7 @@ function logout(){
   loginCard.hidden = false;
   editor.hidden = true;
   listCard.hidden = true;
+  $("reviews-card").hidden = true;
   $("logout").hidden = true;
   $("token").value = "";
   clearStatus($("login-status"));

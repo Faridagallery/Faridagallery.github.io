@@ -62,6 +62,52 @@
   .step h3{font-family:var(--display);font-size:22px;color:var(--wine);margin-bottom:6px}
   .step p{color:var(--muted);font-size:15px}
 
+  /* Trust strip */
+  .trust{background:rgba(74,4,22,.05);border-block:1px solid var(--line);text-align:center;padding:12px 16px;display:flex;justify-content:center;gap:10px 26px;flex-wrap:wrap;font-size:14px;color:var(--wine);font-weight:600}
+  .trust span::before{content:"✦";color:var(--gold);margin-inline-end:6px}
+
+  /* Reviews */
+  .reviews{max-width:1120px;margin:0 auto;padding:56px 20px 0}
+  .review-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+  .review{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px}
+  .review .stars{color:var(--gold);letter-spacing:2px;font-size:16px}
+  .review p{color:var(--muted);font-size:15px;margin:10px 0 14px}
+  .review .who{font-weight:600;color:var(--wine);font-size:14px}
+
+  /* Review submission form */
+  .review-form{margin-top:22px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;gap:12px}
+  .review-form h3{font-family:var(--display);font-size:21px;color:var(--wine);margin:0}
+  .review-form .hint{color:var(--muted);font-size:13px;margin:-6px 0 0}
+  .review-form input[type=text],.review-form textarea{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;font-size:14px;color:var(--ink);background:var(--paper)}
+  .review-form textarea{min-height:90px;resize:vertical}
+  .rating{display:flex;gap:4px;direction:ltr}
+  .rating label{cursor:pointer;font-size:27px;line-height:1;color:#d8c4c8}
+  .rating label.on{color:var(--gold)}
+  .rating input{position:absolute;opacity:0;width:0;height:0}
+  .review-form .send{justify-self:start;background:var(--wine);color:var(--paper);border:0;border-radius:999px;padding:10px 24px;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+
+  /* FAQ */
+  .faq{max-width:1120px;margin:0 auto;padding:56px 20px 0}
+  .faq-list{display:grid;gap:10px}
+  .faq details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:0 18px}
+  .faq summary{cursor:pointer;font-weight:600;padding:14px 0;color:var(--wine);list-style:none;display:flex;justify-content:space-between;gap:10px}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::after{content:"+";color:var(--gold);font-size:20px;line-height:1}
+  .faq details[open] summary::after{content:"−"}
+  .faq details p{color:var(--muted);padding:0 0 16px}
+
+  /* Badges + favorites */
+  .card .ph{position:relative}
+  .badge-card{position:absolute;inset-block-start:10px;inset-inline-start:10px;background:var(--paper);color:var(--wine);font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+  .badge-card.best{background:var(--gold);color:#fff}
+  .badge-card.sold{background:var(--wine);color:var(--paper)}
+  .fav{position:absolute;inset-block-start:8px;inset-inline-end:8px;width:32px;height:32px;border-radius:50%;border:0;background:rgba(251,246,244,.92);color:var(--wine);font-size:19px;line-height:1;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+  .fav[aria-pressed="true"]{background:var(--wine);color:var(--paper)}
+  .toast{position:fixed;z-index:60;inset-block-end:24px;inset-inline:0;margin:auto;width:max-content;max-width:90vw;background:var(--wine);color:var(--paper);padding:10px 20px;border-radius:999px;font-size:14px;opacity:0;transform:translateY(10px);transition:opacity .25s,transform .25s;pointer-events:none}
+  .toast.show{opacity:1;transform:none}
+  .lb-share{position:absolute;inset-block-end:52px;inset-inline:0;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;padding:0 16px}
+  .lb-share button{position:static!important;transform:none!important;font-size:14px!important;padding:8px 16px!important;border:1px solid var(--paper)!important;border-radius:999px;background:transparent;color:var(--paper);cursor:pointer}
+
   /* Loading skeleton */
   .skeleton{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:22px;padding-top:8px}
   .sk{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;overflow:hidden}
@@ -195,6 +241,8 @@
       <a href="#offers">عروض</a>
       <a href="#products-list">منتجات</a>
       <a href="#how">كيف نطلب؟</a>
+      <a href="#reviews">آراء العملاء</a>
+      <a href="#faq">الأسئلة</a>
       <a href="#contact">تواصل</a>
     </div>
   </div>
@@ -225,6 +273,12 @@
   </div>
 </header>
 
+<div class="trust" aria-label="مميزات الخدمة">
+  <span>توصيل لكل المحافظات</span>
+  <span>تخيلها وإحنا ننفذهالك</span>
+  <span>تصميم بلمستك</span>
+</div>
+
 <main id="products">
   <div class="tools">
     <label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="دوّر على منتج..." aria-label="البحث في المنتجات"></label>
@@ -248,7 +302,36 @@
   </ol>
 </section>
 
+<section class="reviews" id="reviews">
+  <div class="head"><h2>آراء العملاء</h2></div>
+  <div class="review-grid" id="reviews-list"></div>
+  <form class="review-form" id="review-form">
+    <h3>شاركنا رأيك 🌸</h3>
+    <p class="hint">هتفتح واتساب برسالة جاهزة — ابعتها وهنضيف رأيك بعد المراجعة.</p>
+    <input id="rv-name" type="text" placeholder="اسمك" required maxlength="60" autocomplete="name">
+    <div class="rating" id="rv-rating" aria-label="التقييم">
+      <label data-v="1">★<input type="radio" name="rv-stars" value="1" aria-label="نجمة واحدة"></label>
+      <label data-v="2">★<input type="radio" name="rv-stars" value="2" aria-label="نجمتان"></label>
+      <label data-v="3">★<input type="radio" name="rv-stars" value="3" aria-label="٣ نجوم"></label>
+      <label data-v="4">★<input type="radio" name="rv-stars" value="4" aria-label="٤ نجوم"></label>
+      <label data-v="5">★<input type="radio" name="rv-stars" value="5" aria-label="٥ نجوم"></label>
+    </div>
+    <textarea id="rv-text" placeholder="اكتب رأيك هنا..." required maxlength="600"></textarea>
+    <button class="send" type="submit">إرسال الرأي على واتساب</button>
+  </form>
+</section>
+
+<section class="faq" id="faq">
+  <div class="head"><h2>الأسئلة الشائعة</h2></div>
+  <div class="faq-list">
+    <details><summary>هل التوصيل متاح لكل المحافظات؟</summary><p>أيوه، بنوصّل لكل المحافظات. هنقولّك تكلفة التوصيل لمحافظتك على واتساب قبل التأكيد.</p></details>
+    <details><summary>هل أقدر أختار التصميم واللون؟</summary><p>أكيد — كل منتجاتنا بتتصمم بلمستك، ابعتلنا الصورة أو الفكرة اللي في بالك وهنجهّزها زي ما تحب.</p></details>
+    <details><summary>الدفع بيتم إزاي؟</summary><p>لتأكيد الطلب، بيتم دفع ديبوزيت بسيط من قيمة الفاتورة مقدمًا، وباقي المبلغ بتدفعه عند الاستلام. كل تفاصيل الدفع والتأكيد متاحة على واتساب.</p></details>
+  </div>
+</section>
+
 <a class="fab-wa" id="fab-wa" href="https://wa.me/201228052906" target="_blank" rel="noopener">واتساب</a>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <footer id="contact">
   <h2>عايز تطلب أو تسأل؟</h2>
@@ -265,6 +348,10 @@
   <button class="lb-arrow lb-prev" id="lb-prev" aria-label="المنتج السابق">›</button>
   <img id="lb-img" alt="">
   <button class="lb-arrow lb-next" id="lb-next" aria-label="المنتج التالي">‹</button>
+  <div class="lb-share">
+    <button type="button" id="lb-share-wa">شارك على واتساب</button>
+    <button type="button" id="lb-copy">نسخ الرابط</button>
+  </div>
   <div class="lb-cap" id="lb-cap"></div>
 </div>
 
@@ -320,8 +407,34 @@ let PRODUCTS = [];
 let SECTIONS = [];
 
 let visible = [];
+let REVIEWS = [];
 const filter = { q: '', cat: 'الكل' };
 let revealObserver = null;
+
+const FAV_KEY = 'farida_favorites';
+let favorites = new Set();
+try { favorites = new Set(JSON.parse(localStorage.getItem(FAV_KEY) || '[]')); } catch {}
+
+function toggleFav(name, btn){
+  if (favorites.has(name)) favorites.delete(name); else favorites.add(name);
+  localStorage.setItem(FAV_KEY, JSON.stringify([...favorites]));
+  btn.textContent = favorites.has(name) ? '♥' : '♡';
+  btn.setAttribute('aria-pressed', String(favorites.has(name)));
+  if (filter.cat === 'المفضلة') render();
+}
+
+let toastTimer = null;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+function shareUrl(p){
+  return location.origin + location.pathname + '?p=' + encodeURIComponent(p.name);
+}
 
 function money(v){
   return v ? String(v).replace(/جنيه/g,'ج.م').replace(/ج\.م\s*ج\.م/g,'ج.م') : v;
@@ -354,6 +467,23 @@ function cardFor(p, i){
   img.alt = p.name; img.loading = 'lazy'; img.src = p.img;
   img.onerror = () => { img.remove(); ph.classList.add('empty'); ph.textContent = 'ف'; };
   ph.appendChild(img);
+
+  if (p.badge) {
+    const b = document.createElement('span');
+    b.className = 'badge-card' + (p.badge === 'الأكثر مبيعًا' ? ' best' : p.badge === 'نفد' ? ' sold' : '');
+    b.textContent = p.badge;
+    ph.appendChild(b);
+  }
+
+  const fav = document.createElement('button');
+  fav.type = 'button';
+  fav.className = 'fav';
+  fav.textContent = favorites.has(p.name) ? '♥' : '♡';
+  fav.setAttribute('aria-pressed', String(favorites.has(p.name)));
+  fav.setAttribute('aria-label', 'إضافة أو إزالة من المفضلة');
+  fav.onclick = e => { e.stopPropagation(); toggleFav(p.name, fav); };
+  ph.appendChild(fav);
+
   li.appendChild(ph);
 
   li.insertAdjacentHTML('beforeend', `<h3></h3><p></p><div class="foot"><div class="prices"><div class="price"></div><span class="old" hidden><em>بدلاً من</em> <b></b></span></div></div>`);
@@ -422,6 +552,22 @@ function buildSlider(items){
     img.onerror = () => { img.remove(); ph.classList.add('empty'); ph.textContent = 'ف'; };
     ph.appendChild(img);
 
+    if (p.badge) {
+      const b = document.createElement('span');
+      b.className = 'badge-card' + (p.badge === 'الأكثر مبيعًا' ? ' best' : p.badge === 'نفد' ? ' sold' : '');
+      b.textContent = p.badge;
+      ph.appendChild(b);
+    }
+
+    const fav = document.createElement('button');
+    fav.type = 'button';
+    fav.className = 'fav';
+    fav.textContent = favorites.has(p.name) ? '♥' : '♡';
+    fav.setAttribute('aria-pressed', String(favorites.has(p.name)));
+    fav.setAttribute('aria-label', 'إضافة أو إزالة من المفضلة');
+    fav.onclick = e => { e.stopPropagation(); toggleFav(p.name, fav); };
+    ph.appendChild(fav);
+
     slide.querySelector('h3').textContent = p.name;
     slide.querySelector('p').textContent = p.desc || '';
     slide.querySelector('.price').textContent = money(p.price) || '';
@@ -466,10 +612,31 @@ function buildSlider(items){
   return wrap;
 }
 
+function renderReviews(){
+  const box = document.getElementById('reviews-list');
+  if (!box) return;
+  box.innerHTML = '';
+  REVIEWS.forEach(r => {
+    const d = document.createElement('div');
+    d.className = 'review';
+    const stars = document.createElement('div');
+    stars.className = 'stars';
+    const n = Math.max(1, Math.min(5, Number(r.rating) || 5));
+    stars.textContent = '★'.repeat(n) + '☆'.repeat(5 - n);
+    const p = document.createElement('p');
+    p.textContent = r.text || '';
+    const who = document.createElement('div');
+    who.className = 'who';
+    who.textContent = r.name || '';
+    d.append(stars, p, who);
+    box.appendChild(d);
+  });
+}
+
 function buildChips(){
   const box = document.getElementById('chips');
   box.innerHTML = '';
-  ['الكل', ...SECTIONS].forEach(cat => {
+  ['الكل', ...SECTIONS, 'المفضلة'].forEach(cat => {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'chip';
@@ -543,12 +710,14 @@ function render(){
   stopSlider();
 
   const q = filter.q.toLowerCase();
+  const favOnly = filter.cat === 'المفضلة';
   const usingFilter = filter.cat !== 'الكل' || !!q;
   let rendered = 0;
 
   SECTIONS.forEach(cat => {
-    if (filter.cat !== 'الكل' && filter.cat !== cat) return;
+    if (!favOnly && filter.cat !== 'الكل' && filter.cat !== cat) return;
     const items = PRODUCTS.filter(p => p.cat === cat &&
+      (!favOnly || favorites.has(p.name)) &&
       (!q || `${p.name} ${p.desc || ''} ${p.price || ''}`.toLowerCase().includes(q)));
     if (!items.length) return;
     rendered += items.length;
@@ -644,16 +813,66 @@ document.getElementById('search').addEventListener('input', e => {
   render();
 });
 
+document.getElementById('lb-share-wa').onclick = () => {
+  const p = visible[lbIndex];
+  if (!p) return;
+  const text = encodeURIComponent(`شوف ${p.name} من فريدة جاليري: ${shareUrl(p)}`);
+  window.open(`https://wa.me/?text=${text}`, '_blank', 'noopener');
+};
+
+document.getElementById('lb-copy').onclick = async () => {
+  const p = visible[lbIndex];
+  if (!p) return;
+  try {
+    await navigator.clipboard.writeText(shareUrl(p));
+    toast('اتنسخ رابط المنتج ✅');
+  } catch {
+    toast('مش قادر انسخ الرابط، جرّب من عنوان الصفحة');
+  }
+};
+
+/* نموذج رأي العميل → رسالة واتساب جاهزة للمراجعة والإضافة من لوحة التحكم */
+(function(){
+  const form = document.getElementById('review-form');
+  const stars = [...document.querySelectorAll('#rv-rating label')];
+  form.querySelectorAll('input[name="rv-stars"]').forEach(r => {
+    r.addEventListener('change', () => {
+      const v = Number(r.value);
+      stars.forEach(l => l.classList.toggle('on', Number(l.dataset.v) <= v));
+    });
+  });
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const name = document.getElementById('rv-name').value.trim();
+    const text = document.getElementById('rv-text').value.trim();
+    const checked = form.querySelector('input[name="rv-stars"]:checked');
+    if (!name || !text || !checked) { toast('اكتب اسمك ورأيك واختار التقييم.'); return; }
+    const rating = Number(checked.value);
+    const msg = `رأي جديد من فريدة جاليري 🌸\n\nالاسم: ${name}\nالتقييم: ${'★'.repeat(rating)}${'☆'.repeat(5-rating)} (${rating}/5)\nالرأي: ${text}`;
+    window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
+    toast('هتفتح واتساب — ابعت الرسالة وهيظهر رأيك بعد المراجعة ✅');
+    form.reset();
+    stars.forEach(l => l.classList.remove('on'));
+  });
+})();
+
 function load(){
   fetch('products.json?v=' + Date.now(), { cache: 'no-store' })
     .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
     .then(data => {
       PRODUCTS = data.products || [];
+      REVIEWS = data.reviews || [];
       SECTIONS = (data.sections && data.sections.length)
         ? data.sections
         : [...new Set(PRODUCTS.map(p => p.cat).filter(Boolean))];
       buildChips();
+      renderReviews();
       render();
+      const wanted = new URLSearchParams(location.search).get('p');
+      if (wanted) {
+        const idx = visible.findIndex(p => p.name === wanted);
+        if (idx >= 0) openLb(idx);
+      }
     })
     .catch(err => {
       console.error(err);
