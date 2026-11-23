@@ -107,20 +107,20 @@
       "badge": "جديد"
     },
     {
-      "name": "سلوبتة سبوع",
-      "price": "350 جنيه",
-      "oldPrice": "455 جنيه",
-      "desc": "",
-      "img": "images/102.jpg",
-      "cat": "منتجات"
-    },
-    {
       "name": "تابلوة خشب",
       "price": "120",
       "desc": "مقاس 20*30",
       "img": "images/p1795448635032.jpg",
       "cat": "منتجات",
       "oldPrice": "150"
+    },
+    {
+      "name": "سلوبتة سبوع",
+      "price": "350 جنيه",
+      "oldPrice": "455 جنيه",
+      "desc": "",
+      "img": "images/102.jpg",
+      "cat": "منتجات"
     }
   ],
   "reviews": [
